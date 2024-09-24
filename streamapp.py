@@ -1,6 +1,7 @@
 import streamlit as st
 import cv2
 import numpy as np
+import io
 
 
 def encrypt(img, message):
@@ -85,7 +86,6 @@ def retrieve_message(img):
 st.title("LSB Steganography")
 st.write("This is a simple implementation of Least Significant Bit (LSB) steganography.")
 
-
 # Encrypt section
 st.header("Encrypt a Message")
 uploaded_image = st.file_uploader("Upload an Image", type=["jpg", "png"])
@@ -97,12 +97,24 @@ if uploaded_image is not None:
     if st.button("Encrypt Message"):
         try:
             encrypted_img = encrypt(image, message)
-            output_path = "encrypted_image.png"
-            cv2.imwrite(output_path, encrypted_img)
-            st.markdown(f"**<span style='color:green;'>Message encrypted! Save the image in </span>** **<span style='color:red; font-size:20px;'><strong>PNG format</strong></span>** **<span style='color:green;'>to decrypt it later.</span>**", unsafe_allow_html=True)
+            st.markdown(f"**<span style='color:green;'>Message encrypted! Click the download button below to save the image in </span>** **<span style='color:red; font-size:20px;'><strong>PNG format</strong></span>** **<span style='color:green;'>to decrypt it later.</span>**", unsafe_allow_html=True)
+
             st.image(encrypted_img, channels="BGR", caption="Encrypted Image")
+
+            # Convert the encrypted image to bytes
+            is_success, buffer = cv2.imencode(".png", encrypted_img)
+            io_buf = io.BytesIO(buffer)
+
+            # Create a download button
+            st.download_button(
+                label="Download Encrypted Image",
+                data=io_buf.getvalue(),
+                file_name="encrypted_image.png",
+                mime="image/png"
+            )
         except Exception as e:
             st.error(f"Error: {str(e)}")
+
 
 # Decrypt section
 st.header("Decrypt a Message")
