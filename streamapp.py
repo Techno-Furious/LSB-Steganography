@@ -99,7 +99,7 @@ if uploaded_image is not None:
             encrypted_img = encrypt(image, message)
             output_path = "encrypted_image.png"
             cv2.imwrite(output_path, encrypted_img)
-            st.success(f"Message encrypted! Save the below image to decrypt later.")
+            st.markdown(f"**<span style='color:green;'>Message encrypted! Save the image in </span>** **<span style='color:red; font-size:20px;'><strong>PNG format</strong></span>** **<span style='color:green;'>to decrypt it later.</span>**", unsafe_allow_html=True)
             st.image(encrypted_img, channels="BGR", caption="Encrypted Image")
         except Exception as e:
             st.error(f"Error: {str(e)}")
